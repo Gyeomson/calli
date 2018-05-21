@@ -1,0 +1,15 @@
+{
+  "name": "calli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "repository": "",
+  "author": "Mostafa Eweda <mo.eweda@gmail.com>",
+  "dependencies": {
+    "async": "~0.2.8",
+    "express": "~4.13.1",
+    "ejs": "~2.4.1"    ,
+    "body-parser": "~1.14.2",
+    "express-session": "~1.13.0"
+  }
+}
