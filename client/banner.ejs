@@ -17,18 +17,30 @@
     <link rel="stylesheet" href="/css/index.css">
   </head>
   <body>
+    <script>
+      var d = new Date();
+      var date = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+      var time = d.getHours();
+      var min = d.getMinutes();
+      console.log(date);
+      console.log(time);
+      console.log(min);
+      document.getElementById("date").value = date;
+      // document.getElementById("time").value = time; selected
+      // document.getElementById("min").value = min;
+    </script>
       
     <nav class="navbar navbar-default">
       <div class="container-fluid">
         <div class="navbar-header">
-          <a class="navbar-brand" href="#">캘리오는 밤</a>
+          <a class="navbar-brand" href="/img">캘리오는 밤</a>
         </div>
         <ul class="nav navbar-nav">
           <li><a href="#">로그아웃</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="#">이미지 등록</a></li>
-          <li><a href="#">푸시 등록</a></li>
+          <li><a href="/banner">이미지 등록</a></li>
+          <li><a href="/push">푸시 등록</a></li>
         </ul>
       </div><!-- /.container-fluid -->
     </nav>
@@ -36,22 +48,38 @@
     <div class="container">
       <div class="explan">
         <ul>
-          <li>자동푸시 총 3건</li>
+          <li>배너 등록</li>
         </ul>
       </div>
       <table class="table">
-          <thead>
-            <td>구분</td>
-            <td>내용</td>
-            <td>상태</td>
-          </thead>
           <tr>
-            <td>매일 유저가 설정된 시간</td>
-            <td>오늘의 캘리가 배달되었습니다:)</td>
-            <td>수정버튼</td>
+            <td>등록 및 예약일</td>
+            <td>
+              <input type="date" id=date></input> 
+              <select name="time">
+                <% for(var i=1; i<=24; i++) {%>
+                    <option value="<%= i %>"><%=i%></option>
+                <% } %>
+              </select> 시
+              <select name="min">
+                <% for(var i=1; i<=60; i++) {%>
+                    <option value="<%= i %>"><%=i%></option>
+                <% } %>
+              </select> 분
+            </td>
+          </tr>
+          <tr>
+            <td>이미지</td>
+            <td>
+              <form action="upload" method="post" enctype="multipart/form-data">
+                <input name="img" type="file">
+                <input type="submit"></input>
+              </form>
+            </td>
           </tr>
         </table>
       
     </div> <!-- end of container -->
+    
   </body>
 </html>

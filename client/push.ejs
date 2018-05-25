@@ -21,14 +21,14 @@
     <nav class="navbar navbar-default">
       <div class="container-fluid">
         <div class="navbar-header">
-          <a class="navbar-brand" href="#">캘리오는 밤</a>
+          <a class="navbar-brand" href="/img">캘리오는 밤</a>
         </div>
         <ul class="nav navbar-nav">
           <li><a href="#">로그아웃</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="#">이미지 등록</a></li>
-          <li><a href="#">푸시 등록</a></li>
+          <li><a href="/banner">이미지 등록</a></li>
+          <li><a href="/push">푸시 등록</a></li>
         </ul>
       </div><!-- /.container-fluid -->
     </nav>
@@ -36,23 +36,24 @@
     <div class="container">
       <div class="explan">
         <ul>
-          <li>이미지 총 3건 등록</li>
-          <li>조회수 순</li>
-          <li>다운수 순</li>
+          <li>자동푸시 총 <%= count %>건</li>
         </ul>
       </div>
       <table class="table">
-          <tr>
-            <td>등록 및 예약일</td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>이미지</td>
-            <td></td>
-          </tr>
+          <thead>
+            <td>구분</td>
+            <td>내용</td>
+            <td>상태</td>
+          </thead>
+          <% for(var i in push){ %>
+            <tr>
+              <td><%= push[i].content %></td>
+              <td><%= push[i].created_at %></td>
+              <td><% push[i].id %></td>
+            </tr>
+          <% } %>
         </table>
       
     </div> <!-- end of container -->
-    
   </body>
 </html>

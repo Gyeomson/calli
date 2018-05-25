@@ -1,7 +1,13 @@
 .content {
     margin-top: 70px;
 }
-
+ul {
+    padding-left: 0;
+}
+li {
+    display: inline-block;
+    list-style-type: none;
+}
 /*index.html*/
 .info {
     text-align: center;

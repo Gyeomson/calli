@@ -4,8 +4,12 @@
 //
 var http = require('http');
 var path = require('path');
-
 var express = require('express');
+
+var bodyParser = require('body-parser');
+var session = require('express-session');
+var fs = require("fs");
+
 
 //
 // ## SimpleServer `SimpleServer(obj)`
@@ -15,7 +19,6 @@ var express = require('express');
 //
 var app = express();
 var server = http.createServer(app);
-var router = require('./router/main')(app);
 
 app.set('views', __dirname + '/client');
 app.set('view engine', 'ejs');
@@ -23,7 +26,10 @@ app.engine('html', require('ejs').renderFile);
 
 app.use(express.static(path.resolve(__dirname, 'client')));
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
 
+var router = require('./router/main')(app);
 
 server.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function(){
   var addr = server.address();
