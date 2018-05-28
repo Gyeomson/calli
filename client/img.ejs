@@ -24,7 +24,7 @@
           <a class="navbar-brand" href="/img">캘리오는 밤</a>
         </div>
         <ul class="nav navbar-nav">
-          <li><a href="#">로그아웃</a></li>
+          <li><a href="/logout">로그아웃</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <li><a href="/banner">이미지 등록</a></li>
@@ -66,16 +66,16 @@
             <tr>
               <td><%= image[i].id %></td>
               <td><%= image[i].created_at %></td>
-              <td><%= image[i].name %></td>
+              <td><img src="/upload/<%= image[i].name %>" alt="<%= image[i].name %>"></img></td>
               <td><%= image[i].click %></td>
               <td><%= image[i].down %></td>
               <td>
-                <form method="PUT" action="/img/<%= image[i].id %>">
+                <form method="GET" action="/update/img/<%= image[i].id %>">
                   <input type="submit" value="수정">
                 </form>
               </td>
               <td>
-                <form method="DELETE" action="/img/<%= image[i].id %>">
+                <form method="GET" action="/delete/img/<%= image[i].id %>">
                   <input type="submit" value="삭제">
                 </form>
               </td>

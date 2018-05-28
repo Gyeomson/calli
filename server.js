@@ -8,7 +8,6 @@ var express = require('express');
 
 var bodyParser = require('body-parser');
 var session = require('express-session');
-var fs = require("fs");
 
 
 //
@@ -24,7 +23,13 @@ app.set('views', __dirname + '/client');
 app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
 
+app.use(session({
+ secret: '~g!y@e#o$m%s^o&n*G+Y_E)O(M*S&O^N%',
+ resave: false,
+ saveUninitialized: true
+}));
 app.use(express.static(path.resolve(__dirname, 'client')));
+app.use(express.static('upload'));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());

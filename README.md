@@ -55,14 +55,20 @@
     자동 푸시 총 00건
     표
         구분 | 내용 | 상태
-        매일 뉴저가 설정된 시간(일1회 | 오늘의 캘리가 배달되었습니다:) | 수정버튼
+        매일 유저가 설정된 시간(일1회 | 오늘의 캘리가 배달되었습니다:) | 수정버튼
         
 ## Database
     <calli>
-    image
-    id | name | click | down | created_at
-    push
-    id | content | created_at
+    #image
+         id        |     name      |   click   |    down     | created_at
+          int      |   varchar(30) |    int    |    int      |  datetime
+    AUTO_INCREMENT |    NOT NULL   | default 0 |  default 0  |
+    - PRIMARY KEY(id)
     
-    id는 auto_increment
+    #push
+           id        |    content    | created_at
+           int       |  varchar(100) |  datetime
+      AUTO_INCREMENT |    NOT NULL   |
+    - PRIMARY KEY(id)
+    
     
