@@ -16,7 +16,8 @@ module.exports = function(app)
         cb(null, 'router/upload/');
       },
       filename: function (req, file, cb) {
-        cb(null, new Date().valueOf() + file.originalname);
+        var ex = file.originalname.split('.');
+        cb(null, new Date().valueOf() +'.'+ ex[1]);
       }
     }),
   });
@@ -81,18 +82,23 @@ module.exports = function(app)
       // console.log('\n\t==== ROUTE /upload ====');
       var date=req.body.date+' '+req.body.time+':'+req.body.min;
       // console.log('date : '+date);
-      // console.log('req.file : '+req.file.filename);
-      var sql = "INSERT INTO image (name, created_at) VALUES('"+req.file.filename+"', '"+date+"');";
-      // console.log(sql);
-      conn.query(sql, function(err, result){ //전체 이미지 목록
-        if(err){
-          console.log(err);
-          res.redirect('/banner');
-        } else {
-          // console.log(result);
-          res.redirect('/img');
-        }
-      });
+      // console.log('req.file : '+req.file);
+      if(req.file != undefined) {
+        var sql = "INSERT INTO image (name, created_at) VALUES('"+req.file.filename+"', '"+date+"');";
+        // console.log(sql);
+        conn.query(sql, function(err, result){ //전체 이미지 목록
+          if(err){
+            console.log(err);
+            res.redirect('/banner');
+          } else {
+            // console.log(result);
+            res.redirect('/img');
+          }
+        });
+      } else {
+        res.redirect('/banner');
+      }
+      
     } else {
       res.redirect('/');
     }
@@ -213,37 +219,42 @@ module.exports = function(app)
   });
   
   app.get('/delete/img/:img_id', function(req, res){ //이미지 삭제
-    console.log('\n\t==== ROUTE /delete ====');
-    // console.log('id : '+req.params.img_id);
-    var sql='SELECT name FROM image WHERE id='+req.params.img_id;
-    console.log(sql);
-    conn.query(sql, function(err, name){ //이미지 이름
-      if(err){
-        console.log(err);
-        res.redirect('/img');
-      } else {
-        // console.log('file path : '+__dirname + '/upload/'+name[0].name);
-        fs.exists(__dirname + '/upload/' + name[0].name, function (exist) { 
-          if(exist){
-            fs.unlink(__dirname + '/upload/' + name[0].name, (err) => { //파일 삭제
-              if (err) throw err;
-              sql = 'DELETE FROM image WHERE id='+req.params.img_id;
-              conn.query(sql, function(err, result){ //DB에서 파일명 삭제
-                if(err){
-                  console.log(err);
-                  res.redirect('/img');
-                } else {
-                  // console.log(result);
-                  res.redirect('/img');
-                }
+    if(req.session.login == 'logined') {
+      console.log('\n\t==== ROUTE /delete ====');
+      // console.log('id : '+req.params.img_id);
+      var sql='SELECT name FROM image WHERE id='+req.params.img_id;
+      console.log(sql);
+      conn.query(sql, function(err, name){ //이미지 이름
+        if(err){
+          console.log(err);
+          res.redirect('/img');
+        } else {
+          // console.log('file path : '+__dirname + '/upload/'+name[0].name);
+          fs.exists(__dirname + '/upload/' + name[0].name, function (exist) { 
+            if(exist){
+              fs.unlink(__dirname + '/upload/' + name[0].name, (err) => { //파일 삭제
+                if (err) throw err;
+                sql = 'DELETE FROM image WHERE id='+req.params.img_id;
+                conn.query(sql, function(err, result){ //DB에서 파일명 삭제
+                  if(err){
+                    console.log(err);
+                    res.redirect('/img');
+                  } else {
+                    // console.log(result);
+                    res.redirect('/img');
+                  }
+                });
               });
-            });
-          } else { //image file is not exist
-            res.redirect('/img');
-          }
-        });
-      }//end of else
-    });  
+            } else { //image file is not exist
+              res.redirect('/img');
+            }
+          });
+        }//end of else
+      }); 
+    } else {
+      res.redirect('/');
+    }
+     
   });
   
   app.get('/push', function(req, res){ //푸시 알림
