@@ -71,4 +71,25 @@
       AUTO_INCREMENT |    NOT NULL   |
     - PRIMARY KEY(id)
     
+## API
+    /clickup/[이미지 번호]
+      : 이미지 번호에 해당하는 조회수를 1 증가
+      return format json
+      "result" : "[success|fail]"
+      "click" : [수정된 조회수] - result가 success인 경우
+      "err" : [에러메세지 전송] - result가 fail
+    /downup/[이미지 번호]
+      : 이미지 번호에 해당하는 다운수를 1 증가
+      return format json
+      "result" : "[success|fail]"
+      "down" : [수정된 ekdnstn] - result가 success인 경우
+      "err" : [에러메세지 전송] - result가 fail
+    /imglist
+      :전체 이미지 리스트를 전송
+      return format json
+      "result" : "[success|fail]"
+      "count" : [전체 이미지 리스트 갯수] - result가 success인 경우
+      "imglist" : [전체 이미지 리스트] - result가 success인 경우
+      "err" : [에러메세지 전송] - result가 fail
+      
     

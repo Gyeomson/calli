@@ -19,7 +19,7 @@
   <body>
       
     <nav class="navbar navbar-default">
-      <div class="container-fluid">
+      <div class="container">
         <div class="navbar-header">
           <a class="navbar-brand" href="/img">캘리오는 밤</a>
         </div>
@@ -66,17 +66,17 @@
             <tr>
               <td><%= image[i].id %></td>
               <td><%= image[i].created_at %></td>
-              <td><img src="/upload/<%= image[i].name %>" alt="<%= image[i].name %>"></img></td>
+              <td><img class="mini_img" src="/show/<%= image[i].name %>" alt="<%= image[i].name %>"></img></td>
               <td><%= image[i].click %></td>
               <td><%= image[i].down %></td>
               <td>
                 <form method="GET" action="/update/img/<%= image[i].id %>">
-                  <input type="submit" value="수정">
+                  <input class="btn btn-default" type="submit" value="수정">
                 </form>
               </td>
               <td>
                 <form method="GET" action="/delete/img/<%= image[i].id %>">
-                  <input type="submit" value="삭제">
+                  <input class="btn btn-default" type="submit" value="삭제">
                 </form>
               </td>
             </tr>

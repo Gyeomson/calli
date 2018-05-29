@@ -22,7 +22,13 @@ li {
     background-color: #ececec;
 }
 /*img.html*/
-
+tr {
+    text-align: center;
+}
+.mini_img {
+    width: 100px;
+    height: auto;
+}
 /*banner.html*/
 input[type=file] {
     display: inline-block;

@@ -28,8 +28,9 @@ app.use(session({
  resave: false,
  saveUninitialized: true
 }));
-app.use(express.static(path.resolve(__dirname, 'client')));
-app.use(express.static('upload'));
+
+app.use(express.static( path.resolve(__dirname, 'client') ));
+app.use(express.static( path.resolve(__dirname, '/upload') )); 
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
