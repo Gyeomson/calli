@@ -34,6 +34,13 @@
           </form>
         </div>
       </div>
+      
+      <% if( typeof msg != undefined) { %>
+        <div class="alert" role="alert">
+          <pre><%= msg %></pre>
+        </div>
+      <% } %>
+      
     </div>  
   </body>
 </html>

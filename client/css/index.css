@@ -14,12 +14,17 @@ li {
     margin-top: 20px;
 }
 .login {
-    width: 300px;
+    width: 400px;
     height: 200px;
     margin: auto;
     padding: 20px;
     text-align: center;
     background-color: #ececec;
+}
+.alert {
+    width: 400px;
+    text-align: center;
+    margin: 10px auto;
 }
 /*img.html*/
 tr {

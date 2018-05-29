@@ -25,7 +25,13 @@ module.exports = function(app)
   app.get('/', function(req, res){
     console.log('\n\t==== ROUTE / ====');
     // console.log(req.session);
-    res.render('index.ejs');
+    var message;
+    if(req.session.login == 'ID') {
+      message = "입력하신 아이디와 비밀번호가 일치하지 않습니다. \n 다시 시도해 주세요";
+    } else if(req.session.login == 'PW') {
+      message = "입력하신 비밀번호가 맞지 않습니다. \n 다시 시도해 주세요";
+    }
+    res.render('index.ejs', {msg: message});
   });
   app.post('/login', function(req, res){
     console.log('\n\t==== ROUTE /login ====');
@@ -35,11 +41,13 @@ module.exports = function(app)
       if(req.body.pw == 'admin') { //로그인 성공
         req.session.login = 'logined';
         // console.log('req.session.login : '+req.session.login);
-        res.redirect("/img"); //!!!!세션 추가하기
+        res.redirect("/img"); 
       } else { //비밀번호 틀림
+        req.session.login = 'PW';
         res.redirect('/');
       }
     } else { //아이디 틀림
+      req.session.login = 'ID';
       res.redirect('/');
     }
   });
