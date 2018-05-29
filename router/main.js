@@ -23,7 +23,7 @@ module.exports = function(app)
   const fs = require("fs");
 
   app.get('/', function(req, res){
-    console.log('\n\t==== ROUTE / ====');
+    // console.log('\n\t==== ROUTE / ====');
     // console.log(req.session);
     var message;
     if(req.session.login == 'ID') {
@@ -34,7 +34,7 @@ module.exports = function(app)
     res.render('index.ejs', {msg: message});
   });
   app.post('/login', function(req, res){
-    console.log('\n\t==== ROUTE /login ====');
+    // console.log('\n\t==== ROUTE /login ====');
     // console.log('req.body.id : '+req.body.id);
     if(req.body.id == 'admin'){
       // console.log('req.body.pw : '+req.body.pw);
@@ -52,7 +52,7 @@ module.exports = function(app)
     }
   });
   app.get('/logout', function(req, res){
-    console.log('\n\t==== ROUTE /logout ====');
+    // console.log('\n\t==== ROUTE /logout ====');
     req.session.destroy(function(err){
       if(err) res.redirect('/');
       // console.log(req.session);
@@ -62,7 +62,7 @@ module.exports = function(app)
   
   app.get('/banner', function(req, res){
     if(req.session.login == 'logined'){
-      console.log('\n\t==== ROUTE /banner ====');
+      // console.log('\n\t==== ROUTE /banner ====');
       var d = new Date();
       var month = d.getMonth()+1;
       if(month < 10) month = '0'+month;
@@ -78,7 +78,7 @@ module.exports = function(app)
   });
   app.post('/upload', upload.single('img'), function(req, res){ //파일 업로드
     if(req.session.login == 'logined') {
-      console.log('\n\t==== ROUTE /upload ====');
+      // console.log('\n\t==== ROUTE /upload ====');
       var date=req.body.date+' '+req.body.time+':'+req.body.min;
       // console.log('date : '+date);
       // console.log('req.file : '+req.file.filename);
@@ -100,7 +100,7 @@ module.exports = function(app)
   
   app.get('/img', function(req, res){
     if(req.session.login == 'logined') {
-      console.log('\n\t==== ROUTE /img ====');
+      // console.log('\n\t==== ROUTE /img ====');
       var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d %H시%i분') as created_at FROM image";
       // console.log(sql);
       conn.query(sql, function(err, image){ //전체 이미지 목록
@@ -124,8 +124,69 @@ module.exports = function(app)
   });
   app.get('/show/:file_name', function(req, res){
     if(req.session.login == 'logined') {
-      console.log('\n\t==== ROUTE /show_file ====');
+      // console.log('\n\t==== ROUTE /show_file ====');
       res.sendFile(__dirname + '/upload/' + req.params.file_name);
+    } else {
+      res.redirect('/');
+    }
+  });
+  app.get('/period/:period', function(req, res){
+    if(req.session.login == 'logined') {
+      // console.log('\n\t==== ROUTE /period_img ====');
+      // console.log('period(day) : '+req.params.period);
+      var now = new Date();
+      var dayOfMonth = now.getDate();
+      now.setDate(dayOfMonth - req.params.period);
+      var month = now.getMonth()+1;
+      if(month < 10) month = '0'+month;
+      var date = now.getFullYear()+"-"+month+"-"+now.getDate();
+      // console.log(date);
+      var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d %H시%i분') as created_at "+
+                "FROM image "+
+                "WHERE DATE(created_at) >= '"+date+"'";
+      // console.log(sql);
+      conn.query(sql, function(err, image){ //전체 이미지 목록
+        if(err){
+          console.log(err);
+        } else {
+          // console.log(image);
+          conn.query('SELECT count(id) as count FROM image', function(err, count){ //전체 이미지 갯수
+            if(err){
+              console.log(err);
+            } else {
+              // console.log(count[0].count);
+              res.render('img.ejs', {image:image, count:count[0].count});
+            } //end of else
+          });
+        } //end of else
+      });
+    } else {
+      res.redirect('/');
+    }
+  });
+  app.get('/arrange/:stand', function(req, res){
+    if(req.session.login == 'logined') {
+      // console.log('\n\t==== ROUTE /period_img ====');
+      
+      var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d %H시%i분') as created_at "+
+                "FROM image "+
+                "ORDER BY "+req.params.stand+" DESC";
+      // console.log(sql);
+      conn.query(sql, function(err, image){ //전체 이미지 목록
+        if(err){
+          console.log(err);
+        } else {
+          // console.log(image);
+          conn.query('SELECT count(id) as count FROM image', function(err, count){ //전체 이미지 갯수
+            if(err){
+              console.log(err);
+            } else {
+              // console.log(count[0].count);
+              res.render('img.ejs', {image:image, count:count[0].count});
+            } //end of else
+          });
+        } //end of else
+      });
     } else {
       res.redirect('/');
     }
@@ -205,6 +266,7 @@ module.exports = function(app)
     });
   });
   
+  /**********API**************/
   app.get('/clickup/:img_id', function(req, res){
       console.log('\n\t==== ROUTE /clickup ====');
       // console.log('img_id : '+req.params.img_id);

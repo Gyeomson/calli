@@ -35,19 +35,24 @@
       
     <div class="container">
       <div class="date">
-        <!--<button class="btn btn-default" type="submit">오늘</button>-->
-        <!--<button class="btn btn-default" type="submit">1주일</button>-->
-        <!--<button class="btn btn-default" type="submit">1개월</button>-->
-        <!--<button class="btn btn-default" type="submit">3개월</button>-->
-        <!--<button class="btn btn-default" type="submit">6개월</button>-->
-        <!--<button class="btn btn-default" type="submit">12개월</button>-->
+        <button class="btn btn-link" onclick="window.location.href='/period/0'">오늘</button>
+        <button class="btn btn-link" onclick="window.location.href='/period/7'">1주일</button>
+        <button class="btn btn-link" onclick="window.location.href='/period/30'">1개월</button>
+        <button class="btn btn-link" onclick="window.location.href='/period/91'">3개월</button>
+        <button class="btn btn-link" onclick="window.location.href='/period/182'">6개월</button>
+        <button class="btn btn-link" onclick="window.location.href='/period/365'">12개월</button>
       </div>
       
       <div class="explan">
         <ul>
           <li>이미지 총 <%= count %>건 등록</li>
-          <!--<li>조회수 순</li>-->
-          <!--<li>다운수 순</li>-->
+          <li class="right"> 
+            <a href='/arrange/click'> 조회수 순 </a> 
+          </li>
+          <li class="right"> | </li>
+          <li class="right"> 
+            <a href='/arrange/down'> 다운수 순 </a> 
+          </li>
         </ul>
       </div>
       

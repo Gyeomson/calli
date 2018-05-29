@@ -27,6 +27,16 @@ li {
     margin: 10px auto;
 }
 /*img.html*/
+.date {
+    margin-bottom: 10px; 
+}
+.right {
+    float: right;
+}
+.right a {
+    margin-left: 10px;
+    margin-right: 10px;
+}
 tr {
     text-align: center;
 }
