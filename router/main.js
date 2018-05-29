@@ -349,7 +349,7 @@ module.exports = function(app)
       });
   });
   app.get('/imglist', function(req, res){
-      console.log('\n\t==== ROUTE /img ====');
+      console.log('\n\t==== ROUTE /imglist ====');
       var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d %H시%i분') as created_at FROM image";
       // console.log(sql);
       conn.query(sql, function(err, image){ //전체 이미지 목록

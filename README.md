@@ -22,7 +22,7 @@
 <!--Once the server is running, open the project in the shape of 'https://projectname-username.c9users.io/'. As you enter your name, watch the Users list (on the left) update. Once you press Enter or Send, the message is shared with all connected clients.-->
 
 # 캘리오는 밤 관리자
-'https://calli-gyeomson.c9users.io/'
+    $ node server.js
 ## VIEW
 ### 로그인화면
     아이디와 비밀버호를 입력해 주세요
