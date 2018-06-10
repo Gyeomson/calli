@@ -11,13 +11,14 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     
     <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="/css/index.css">
   </head>
   <body>
-      
+ 
+
     <nav class="navbar navbar-default">
       <div class="container">
         <div class="navbar-header">
@@ -40,19 +41,71 @@
         </ul>
       </div>
       <table class="table">
-          <thead>
-            <td>구분</td>
-            <td>내용</td>
-            <td>상태</td>
-          </thead>
-          <% for(var i in push){ %>
-            <tr>
-              <td><%= push[i].content %></td>
-              <td><%= push[i].created_at %></td>
-              <td><% push[i].id %></td>
-            </tr>
-          <% } %>
-        </table>
+        <thead>
+          <td>구분</td>
+          <td>내용</td>
+          <td>상태</td>
+        </thead>
+        <% for(var i in push){ %>
+          <tr>
+            <td><%= push[i].created_at %></td>
+            <td><%= push[i].content %></td>
+            <td>
+              <button type="button" class="btn btn-default" data-toggle="modal" data-target="#update">
+                수정
+              </button>
+              <!-- Modal -->
+              <div class="modal fade" id="update" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title" id="updateModalLabel">알림 수정하기</h4>
+                    </div>
+                    <form method="POST" action="/update/push/<% push[i].id %>">
+                      <div class="modal-body">
+                        <textarea name="content" class="form-control" rows="3"><%= push[i].content %></textarea>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        <% } %>
+      </table>
+      
+      <!-- Button trigger modal -->
+      <div class="col-md-1 col-md-offset-11 col-sm-1 col-sm-offset-11">
+        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">
+          푸시 등록
+        </button>
+      </div>
+      
+      
+      <!-- Modal -->
+      <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="myModalLabel">push 등록하기</h4>
+            </div>
+            <form method="POST" action="/create">
+            <div class="modal-body">
+                <textarea name="content" class="form-control" rows="3"></textarea>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+            </form>
+          </div>
+        </div>
+      </div>      
       
     </div> <!-- end of container -->
   </body>

@@ -31,6 +31,8 @@ module.exports = function(app)
       message = "입력하신 아이디와 비밀번호가 일치하지 않습니다. \n 다시 시도해 주세요";
     } else if(req.session.login == 'PW') {
       message = "입력하신 비밀번호가 맞지 않습니다. \n 다시 시도해 주세요";
+    } else if(req.session.login == 'logined') {
+      res.redirect('/img');
     }
     res.render('index.ejs', {msg: message});
   });
@@ -79,13 +81,12 @@ module.exports = function(app)
   });
   app.post('/upload', upload.single('img'), function(req, res){ //파일 업로드
     if(req.session.login == 'logined') {
-      // console.log('\n\t==== ROUTE /upload ====');
+      console.log('\n\t==== ROUTE /upload ====');
       var date=req.body.date+' '+req.body.time+':'+req.body.min;
-      // console.log('date : '+date);
-      // console.log('req.file : '+req.file);
+      console.log('req.file : ');console.log(req.file);
       if(req.file != undefined) {
         var sql = "INSERT INTO image (name, created_at) VALUES('"+req.file.filename+"', '"+date+"');";
-        // console.log(sql);
+        console.log(sql);
         conn.query(sql, function(err, result){ //전체 이미지 목록
           if(err){
             console.log(err);
@@ -198,26 +199,42 @@ module.exports = function(app)
     }
   });
   
-  app.get('/update/img/:img_id', function(req, res){ //!!!!이미지 수정
+  app.post('/update/:img_id', upload.single('img'), function(req, res){ //!!!!이미지 수정
     console.log('\n\t==== ROUTE /update_img ====');
-    console.log('id : '+req.params.img_id);
+    // console.log('existed file id : '+req.params.img_id);
+    // console.log('new FILENAME : '+req.file.filename);
     var sql='SELECT name FROM image WHERE id='+req.params.img_id;
-    console.log(sql);
+    // console.log(sql);
     conn.query(sql, function(err, name){ //이미지 이름
       if(err){
         console.log(err);
         res.redirect('/img');
       } else {
-        console.log('name : '+name[0].name);
-        console.log('file path : '+__dirname + '/upload/' + name[0].name);
-        
-        //!!!!파일 수정
-        res.redirect('/img');
-      }
+        // console.log('existed file name : '+name[0].name);
+        // console.log('existed file path : '+__dirname + '/upload/' + name[0].name);
+        fs.exists(__dirname + '/upload/' + name[0].name, function (exist) { 
+          if(exist){
+            fs.unlink(__dirname + '/upload/' + name[0].name, (err) => { //파일 삭제
+              if (err) throw err;
+              sql = "UPDATE image SET name='"+req.file.filename+"' WHERE id="+req.params.img_id;
+              // console.log(sql);
+              conn.query(sql, function(err, result){ //DB에서 파일명 수정
+                if(err){
+                  console.log(err);
+                  res.redirect('/img');
+                } else {
+                  console.log(result);
+                  res.redirect('/img');
+                }
+              });
+            });
+          } else { //image file is not exist
+            res.redirect('/img');
+          }
+        });
+      }//end of else
     }); 
-    
   });
-  
   app.get('/delete/img/:img_id', function(req, res){ //이미지 삭제
     if(req.session.login == 'logined') {
       console.log('\n\t==== ROUTE /delete ====');
@@ -258,23 +275,50 @@ module.exports = function(app)
   });
   
   app.get('/push', function(req, res){ //푸시 알림
-    console.log('\n\t==== ROUTE /push ====');
-    var sql = 'SELECT * FROM push';
-    conn.query(sql, function(err, push){ //전체 이미지 목록
-      if(err){
-        console.log(err);
-      } else {
-        // console.log(push);
-        conn.query('SELECT count(id) as count FROM push', function(err, count){ //전체 이미지 목록
+    if(req.session.login == 'logined') {
+      console.log('\n\t==== ROUTE /push ====');
+      var sql = 'SELECT id, content, DATE_FORMAT(created_at,"%Y.%m.%d") as created_at FROM push';
+      conn.query(sql, function(err, push){ //전체 이미지 목록
         if(err){
           console.log(err);
         } else {
-          // console.log(count[0].count);
-          res.render('push.ejs', {push:push, count:count[0].count});
+          // console.log(push);
+          conn.query('SELECT count(id) as count FROM push', function(err, count){ //전체 알림 목록
+          if(err){
+            console.log(err);
+          } else {
+            // console.log(count[0].count);
+            res.render('push.ejs', {push:push, count:count[0].count});
+          }
+        });
+        }//end of else
+      });
+    } else {
+      res.redirect('/');
+    }
+  });
+  app.post('/create', function(req, res){ //push
+    if(req.session.login == 'logined') {
+      console.log('\n\t==== ROUTE /create ====');
+      var d = new Date();
+      var month = d.getMonth()+1;
+      if(month < 10) month = '0'+month;
+      var date = d.getFullYear()+"-"+month+"-"+d.getDate();
+      // console.log(req.body);
+      var sql = "INSERT INTO push (content, created_at) VALUES('"+req.body.content+"', '"+date+"');";
+      console.log(sql);
+      conn.query(sql, function(err, result){ //
+        if(err){
+          console.log(err);
+          res.redirect('/push');
+        } else {
+          // console.log(result);
+          res.redirect('/push');
         }
       });
-      }//end of else
-    });
+    } else {
+      res.redirect('/');
+    }
   });
   
   /**********API**************/
@@ -350,7 +394,7 @@ module.exports = function(app)
   });
   app.get('/imglist', function(req, res){
       console.log('\n\t==== ROUTE /imglist ====');
-      var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d %H시%i분') as created_at FROM image";
+      var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d') as created_at FROM image";
       // console.log(sql);
       conn.query(sql, function(err, image){ //전체 이미지 목록
         if(err){

@@ -11,8 +11,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     
     <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="/css/index.css">
   </head>
@@ -75,9 +75,32 @@
               <td><%= image[i].click %></td>
               <td><%= image[i].down %></td>
               <td>
-                <form method="GET" action="/update/img/<%= image[i].id %>">
-                  <input class="btn btn-default disabled" type="submit" value="수정">
-                </form>
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal_<%= image[i].id %>">
+                  사진 수정
+                </button>
+                
+                <!-- Modal -->
+                <div class="modal fade" id="myModal_<%= image[i].id %>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_<%= image[i].id %>">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel_<%= image[i].id %>"><%= image[i].id %>번째 사진 바꾸기</h4>
+                      </div>
+                      <form method="POST" action="/update/<%= image[i].id %>" enctype="multipart/form-data">
+                      <div class="modal-body">
+                          <input class="btn btn-link" name="img" type="file">
+                          <!--<input class="btn btn-default" type="submit" value="제출"></input>-->
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                      </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
               </td>
               <td>
                 <form method="GET" action="/delete/img/<%= image[i].id %>">

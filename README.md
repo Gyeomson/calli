@@ -24,7 +24,8 @@
 # 캘리오는 밤 관리자
 
     $ mysql-ctl cli
-    $ use calli
+    mysql> use calli
+    mysql> quit
     $ node server.js
 
 ## VIEW
@@ -94,6 +95,7 @@
       "result" : "[success|fail]"
       "count" : [전체 이미지 리스트 갯수] - result가 success인 경우
       "imglist" : [전체 이미지 리스트] - result가 success인 경우
+        "id" "name" "click" "down" "created_at"
       "err" : [에러메세지 전송] - result가 fail
       
     
