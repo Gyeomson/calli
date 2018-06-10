@@ -51,17 +51,17 @@
             <td><%= push[i].created_at %></td>
             <td><%= push[i].content %></td>
             <td>
-              <button type="button" class="btn btn-default" data-toggle="modal" data-target="#update">
+              <button type="button" class="btn btn-default" data-toggle="modal" data-target="#update_<%= push[i].id %>">
                 수정
               </button>
               <!-- Modal -->
-              <div class="modal fade" id="update" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel">
+              <div class="modal fade" id="update_<%= push[i].id %>" tabindex="-1" role="dialog" aria-labelledby="updateModal_<%= push[i].id %>">
                 <div class="modal-dialog" role="document">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h4 class="modal-title" id="updateModalLabel">알림 수정하기</h4>
+                      <h4 class="modal-title" id="updateModal_<%= push[i].id %>">알림 수정하기</h4>
                     </div>
-                    <form method="POST" action="/update/push/<% push[i].id %>">
+                    <form method="POST" action="/update/push/<%= push[i].id %>">
                       <div class="modal-body">
                         <textarea name="content" class="form-control" rows="3"><%= push[i].content %></textarea>
                       </div>
@@ -96,7 +96,8 @@
             </div>
             <form method="POST" action="/create">
             <div class="modal-body">
-                <textarea name="content" class="form-control" rows="3"></textarea>
+              <input name="date" type="date" value="<%= date %>">
+              <textarea name="content" class="form-control" rows="3"></textarea>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
