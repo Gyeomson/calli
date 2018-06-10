@@ -24,7 +24,7 @@ module.exports = function(app)
   const fs = require("fs");
 
   app.get('/', function(req, res){
-    // console.log('\n\t==== ROUTE / ====');
+    console.log('\n\t==== ROUTE / ====');
     // console.log(req.session);
     var message;
     if(req.session.login == 'ID') {
@@ -37,7 +37,7 @@ module.exports = function(app)
     res.render('index.ejs', {msg: message});
   });
   app.post('/login', function(req, res){
-    // console.log('\n\t==== ROUTE /login ====');
+    console.log('\n\t==== ROUTE /login ====');
     // console.log('req.body.id : '+req.body.id);
     if(req.body.id == 'admin'){
       // console.log('req.body.pw : '+req.body.pw);
@@ -55,7 +55,7 @@ module.exports = function(app)
     }
   });
   app.get('/logout', function(req, res){
-    // console.log('\n\t==== ROUTE /logout ====');
+    console.log('\n\t==== ROUTE /logout ====');
     req.session.destroy(function(err){
       if(err) res.redirect('/');
       // console.log(req.session);
@@ -65,7 +65,7 @@ module.exports = function(app)
   
   app.get('/banner', function(req, res){
     if(req.session.login == 'logined'){
-      // console.log('\n\t==== ROUTE /banner ====');
+      console.log('\n\t==== ROUTE /banner ====');
       var d = new Date();
       var month = d.getMonth()+1;
       if(month < 10) month = '0'+month;
@@ -83,10 +83,10 @@ module.exports = function(app)
     if(req.session.login == 'logined') {
       console.log('\n\t==== ROUTE /upload ====');
       var date=req.body.date+' '+req.body.time+':'+req.body.min;
-      console.log('req.file : ');console.log(req.file);
+      // console.log('req.file : ');console.log(req.file);
       if(req.file != undefined) {
         var sql = "INSERT INTO image (name, created_at) VALUES('"+req.file.filename+"', '"+date+"');";
-        console.log(sql);
+        // console.log(sql);
         conn.query(sql, function(err, result){ //전체 이미지 목록
           if(err){
             console.log(err);
@@ -107,7 +107,7 @@ module.exports = function(app)
   
   app.get('/img', function(req, res){
     if(req.session.login == 'logined') {
-      // console.log('\n\t==== ROUTE /img ====');
+      console.log('\n\t==== ROUTE /img ====');
       var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d %H시%i분') as created_at FROM image";
       // console.log(sql);
       conn.query(sql, function(err, image){ //전체 이미지 목록
@@ -139,7 +139,7 @@ module.exports = function(app)
   });
   app.get('/period/:period', function(req, res){
     if(req.session.login == 'logined') {
-      // console.log('\n\t==== ROUTE /period_img ====');
+      console.log('\n\t==== ROUTE /period_img ====');
       // console.log('period(day) : '+req.params.period);
       var now = new Date();
       var dayOfMonth = now.getDate();
@@ -173,7 +173,7 @@ module.exports = function(app)
   });
   app.get('/arrange/:stand', function(req, res){
     if(req.session.login == 'logined') {
-      // console.log('\n\t==== ROUTE /period_img ====');
+      console.log('\n\t==== ROUTE /period_img ====');
       
       var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d %H시%i분') as created_at "+
                 "FROM image "+
@@ -280,7 +280,7 @@ module.exports = function(app)
   
   app.get('/push', function(req, res){ //푸시 알림
     if(req.session.login == 'logined') {
-      // console.log('\n\t==== ROUTE /push ====');
+      console.log('\n\t==== ROUTE /push ====');
       var d = new Date();
       var month = d.getMonth()+1;
       if(month < 10) month = '0'+month;
@@ -307,7 +307,7 @@ module.exports = function(app)
   });
   app.post('/create', function(req, res){ //push
     if(req.session.login == 'logined') {
-      // console.log('\n\t==== ROUTE /create ====');
+      console.log('\n\t==== ROUTE /create ====');
       
       // console.log(req.body);
       var sql = "INSERT INTO push (content, created_at) VALUES('"+req.body.content+"', '"+req.body.date+"');";
@@ -327,7 +327,7 @@ module.exports = function(app)
   });
   app.post('/update/push/:push_id', function(req, res){ //push 수정
     if(req.session.login == 'logined') {
-      // console.log('\n\t==== ROUTE /update_push ====');
+      console.log('\n\t==== ROUTE /update_push ====');
       var sql = "UPDATE push SET content='"+req.body.content+"' WHERE id="+req.params.push_id;
       // console.log(sql);
       conn.query(sql, function(err, result){ //DB에서 push 내용 수정
@@ -443,6 +443,66 @@ module.exports = function(app)
             } //end of else
           });
         } //end of else
+      });
+  });
+  app.get('/img/:id', function(req, res){
+      console.log('\n\t==== ROUTE /img/:id ====');
+      var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d') as created_at FROM image WHERE id>="+req.params.id;
+      // console.log(sql);
+      conn.query(sql, function(err, image){ //전체 이미지 목록
+        if(err){
+          console.log(err);
+          res.json({
+            "result" : "fail",
+            "err" : err
+          });
+        } else {
+          conn.query('SELECT count(id) as count FROM image WHERE id>='+req.params.id, function(err, count){ //전체 이미지 목록
+            if(err){
+              console.log(err);
+              res.json({
+                "result" : "fail",
+                "err" : err
+              });
+            } else {
+              res.json({
+                "result" : "success",
+                "count" : count[0].count,
+                "imglist" : image
+              });
+            } //end of else
+          });
+        }//end of else
+      });
+  });
+  app.get('/imgAt/:date', function(req, res){
+      console.log('\n\t==== ROUTE /imgAt ====');
+      var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d') as created_at FROM image WHERE created_at>='"+req.params.date+"'";
+      // console.log(sql);
+      conn.query(sql, function(err, image){ //이미지 목록
+        if(err){
+          console.log(err);
+          res.json({
+            "result" : "fail",
+            "err" : err
+          });
+        } else {
+          conn.query('SELECT count(id) as count FROM image WHERE created_at>="'+req.params.date+'"', function(err, count){ //전체 이미지 목록
+            if(err){
+              console.log(err);
+              res.json({
+                "result" : "fail",
+                "err" : err
+              });
+            } else {
+              res.json({
+                "result" : "success",
+                "count" : count[0].count,
+                "imglist" : image
+              });
+            } //end of else
+          });
+        }//end of else
       });
   });
 }

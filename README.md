@@ -97,5 +97,21 @@
       "imglist" : [전체 이미지 리스트] - result가 success인 경우
         "id" "name" "click" "down" "created_at"
       "err" : [에러메세지 전송] - result가 fail
-      
+    ======
+    /img/:id
+      :id보다 큰 id를 가진 이미지 리스트를 전송
+      return format json
+      "result" : "[success|fail]"
+      "count" : [이미지 리스트 갯수] - result가 success인 경우
+      "imglist" : [이미지 리스트] - result가 success인 경우
+        "id" "name" "click" "down" "created_at"
+      "err" : [에러메세지 전송] - result가 fail
+    /imgAt/:date
+      :date보다 나중에 등록된 이미지 리스트를 전송(date 포함)
+      return format json
+      "result" : "[success|fail]"
+      "count" : [이미지 리스트 갯수] - result가 success인 경우
+      "imglist" : [이미지 리스트] - result가 success인 경우
+        "id" "name" "click" "down" "created_at"
+      "err" : [에러메세지 전송] - result가 fail  
     
