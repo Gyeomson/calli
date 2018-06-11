@@ -47,6 +47,10 @@ tr {
     width: 100px;
     height: auto;
 }
+.panel-body form {
+    /*display: inline-block;*/
+    float: right;
+}
 /*banner.html*/
 input[type=file] {
     display: inline-block;

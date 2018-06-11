@@ -159,7 +159,35 @@ module.exports = function(app)
           console.log(err);
         } else {
           // console.log(image);
-          conn.query('SELECT count(id) as count FROM image', function(err, count){ //전체 이미지 갯수
+          conn.query('SELECT count(id) as count FROM image WHERE DATE(created_at) >= "'+date+'"', function(err, count){ //전체 이미지 갯수
+            if(err){
+              console.log(err);
+            } else {
+              // console.log(count[0].count);
+              res.render('img.ejs', {image:image, count:count[0].count});
+            } //end of else
+          });
+        } //end of else
+      });
+    } else {
+      res.redirect('/');
+    }
+  });
+  app.post('/period', function(req, res){
+    if(req.session.login == 'logined') {
+      console.log('\n\t==== ROUTE /period ====');
+      // console.log(req.body.startdate);
+      // console.log(req.body.enddate);
+      var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d %H시%i분') as created_at "+
+                "FROM image "+
+                "WHERE DATE(created_at) between '"+req.body.startdate+"' and '"+req.body.enddate+"'";
+      // console.log(sql);
+      conn.query(sql, function(err, image){ // 이미지 목록
+        if(err){
+          console.log(err);
+        } else {
+          // console.log(image);
+          conn.query('SELECT count(id) as count FROM image WHERE DATE(created_at) between "'+req.body.startdate+'" and "'+req.body.enddate+'"', function(err, count){ //전체 이미지 갯수
             if(err){
               console.log(err);
             } else {
