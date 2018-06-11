@@ -83,10 +83,11 @@ module.exports = function(app)
     if(req.session.login == 'logined') {
       console.log('\n\t==== ROUTE /upload ====');
       var date=req.body.date+' '+req.body.time+':'+req.body.min;
+      console.log(date);
       // console.log('req.file : ');console.log(req.file);
       if(req.file != undefined) {
         var sql = "INSERT INTO image (name, created_at) VALUES('"+req.file.filename+"', '"+date+"');";
-        // console.log(sql);
+        console.log(sql);
         conn.query(sql, function(err, result){ //전체 이미지 목록
           if(err){
             console.log(err);
@@ -130,12 +131,12 @@ module.exports = function(app)
     }
   });
   app.get('/show/:file_name', function(req, res){
-    if(req.session.login == 'logined') {
+    // if(req.session.login == 'logined') {
       // console.log('\n\t==== ROUTE /show_file ====');
       res.sendFile(__dirname + '/upload/' + req.params.file_name);
-    } else {
-      res.redirect('/');
-    }
+    // } else {
+    //   res.redirect('/');
+    // }
   });
   app.get('/period/:period', function(req, res){
     if(req.session.login == 'logined') {
@@ -224,7 +225,7 @@ module.exports = function(app)
                     console.log(err);
                     res.redirect('/img');
                   } else {
-                    console.log(result);
+                    // console.log(result);
                     res.redirect('/img');
                   }
                 });
@@ -244,7 +245,7 @@ module.exports = function(app)
       console.log('\n\t==== ROUTE /delete ====');
       // console.log('id : '+req.params.img_id);
       var sql='SELECT name FROM image WHERE id='+req.params.img_id;
-      console.log(sql);
+      // console.log(sql);
       conn.query(sql, function(err, name){ //이미지 이름
         if(err){
           console.log(err);
@@ -311,7 +312,7 @@ module.exports = function(app)
       
       // console.log(req.body);
       var sql = "INSERT INTO push (content, created_at) VALUES('"+req.body.content+"', '"+req.body.date+"');";
-      // console.log(sql);
+      console.log(sql);
       conn.query(sql, function(err, result){ //
         if(err){
           console.log(err);
