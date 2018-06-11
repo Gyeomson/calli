@@ -33,8 +33,9 @@ module.exports = function(app)
       message = "입력하신 비밀번호가 맞지 않습니다. \n 다시 시도해 주세요";
     } else if(req.session.login == 'logined') {
       res.redirect('/img');
+    } else {
+      res.render('index.ejs', {msg: message});
     }
-    res.render('index.ejs', {msg: message});
   });
   app.post('/login', function(req, res){
     console.log('\n\t==== ROUTE /login ====');
@@ -83,11 +84,11 @@ module.exports = function(app)
     if(req.session.login == 'logined') {
       console.log('\n\t==== ROUTE /upload ====');
       var date=req.body.date+' '+req.body.time+':'+req.body.min;
-      console.log(date);
+      // console.log(date);
       // console.log('req.file : ');console.log(req.file);
       if(req.file != undefined) {
         var sql = "INSERT INTO image (name, created_at) VALUES('"+req.file.filename+"', '"+date+"');";
-        console.log(sql);
+        // console.log(sql);
         conn.query(sql, function(err, result){ //전체 이미지 목록
           if(err){
             console.log(err);
@@ -350,7 +351,7 @@ module.exports = function(app)
       console.log('\n\t==== ROUTE /clickup ====');
       // console.log('img_id : '+req.params.img_id);
       var sql = "SELECT click FROM image where id="+req.params.img_id;
-      console.log(sql);
+      // console.log(sql);
       conn.query(sql, function(err, result){ //증가할 이미지 찾기
         if(err){
           console.log(err);
@@ -359,10 +360,10 @@ module.exports = function(app)
             "err" : err
           });
         } else {
-          console.log(result);
+          // console.log(result);
           var click = result[0].click + 1; 
           var sql = "UPDATE image SET click="+click+" WHERE id="+req.params.img_id;
-          console.log(sql);
+          // console.log(sql);
           conn.query(sql, function(err, result){ //전체 이미지 목록
             if(err){
               console.log(err);
@@ -371,7 +372,7 @@ module.exports = function(app)
                 "err" : err
               });
             } else {
-              console.log(result);
+              // console.log(result);
               res.json({
                 "result" : "success",
                 "click" : click
@@ -385,7 +386,7 @@ module.exports = function(app)
       console.log('\n\t==== ROUTE /downup ====');
       // console.log('img_id : '+req.params.img_id);
       var sql = "SELECT down FROM image where id="+req.params.img_id;
-      console.log(sql);
+      // console.log(sql);
       conn.query(sql, function(err, result){ //증가할 이미지 찾기
         if(err){
           console.log(err);
@@ -394,10 +395,10 @@ module.exports = function(app)
             "err" : err
           });
         } else {
-          console.log(result);
+          // console.log(result);
           var down = result[0].down + 1; 
           var sql = "UPDATE image SET down="+down+" WHERE id="+req.params.img_id;
-          console.log(sql);
+          // console.log(sql);
           conn.query(sql, function(err, result){ //전체 이미지 목록
             if(err){
               console.log(err);
@@ -406,7 +407,7 @@ module.exports = function(app)
                 "err" : err
               });
             } else {
-              console.log(result);
+              // console.log(result);
               res.json({
                 "result" : "success",
                 "down" : down
