@@ -8,6 +8,9 @@ li {
     display: inline-block;
     list-style-type: none;
 }
+.explan ul li:first-child {
+    font-weight: bold;
+}
 /*index.html*/
 .info {
     text-align: center;

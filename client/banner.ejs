@@ -39,13 +39,13 @@
           <li>배너 등록</li>
         </ul>
       </div>
-      <table class="table">
-        <form action="upload" method="post" enctype="multipart/form-data">
+      <form class="form-inline" action="upload" method="post" enctype="multipart/form-data">
+        <table class="table">
           <tr>
             <td>등록 및 예약일</td>
             <td>
-              <input name="date" type="date" value="<%= date %>">
-              <select name="time">
+              <input class="form-control" name="date" type="date" value="<%= date %>">
+              <select name="time" class="form-control">
                 <% for(var i=1; i<=24; i++) {%>
                   <% if(i==time) {%>
                     <option value="<%= i %>" selected><%=i%></option>
@@ -53,7 +53,7 @@
                     <option value="<%= i %>"><%=i%></option>
                 <% } } %>
               </select> 시 
-              <select name="min">
+              <select name="min" class="form-control">
                 <% for(var i=1; i<=60; i++) {%>
                   <% if(i==min) {%>
                     <option value="<%= i %>" selected><%=i%></option>
@@ -68,12 +68,16 @@
             <td>
               
                 <input class="btn btn-link" name="img" type="file">
-                <input class="btn btn-default" type="submit"></input>
+                
               
             </td>
           </tr>
-        </form>
-      </table>
+        </table>
+        <div style="text-align:center">
+          <input class="btn btn-default" type="submit" value=" 목록 "></input>
+          <input class="btn btn-primary" type="submit" value=" 저장 "></input>
+        </div>
+      </form>
       
     </div> <!-- end of container -->
     
