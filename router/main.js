@@ -31,7 +31,8 @@ module.exports = function(app)
       message = "입력하신 아이디와 비밀번호가 일치하지 않습니다. \n 다시 시도해 주세요";
     } else if(req.session.login == 'PW') {
       message = "입력하신 비밀번호가 맞지 않습니다. \n 다시 시도해 주세요";
-    } else if(req.session.login == 'logined') {
+    }
+    if(req.session.login == 'logined') {
       res.redirect('/img');
     } else {
       res.render('index.ejs', {msg: message});
@@ -39,7 +40,7 @@ module.exports = function(app)
   });
   app.post('/login', function(req, res){
     console.log('\n\t==== ROUTE /login ====');
-    // console.log('req.body.id : '+req.body.id);
+    // console.log(req.body);
     if(req.body.id == 'admin'){
       // console.log('req.body.pw : '+req.body.pw);
       if(req.body.pw == 'admin') { //로그인 성공
@@ -379,7 +380,7 @@ module.exports = function(app)
       console.log('\n\t==== ROUTE /clickup ====');
       // console.log('img_id : '+req.params.img_id);
       var sql = "SELECT click FROM image where id="+req.params.img_id;
-      // console.log(sql);
+      console.log(sql);
       conn.query(sql, function(err, result){ //증가할 이미지 찾기
         if(err){
           console.log(err);
@@ -414,7 +415,7 @@ module.exports = function(app)
       console.log('\n\t==== ROUTE /downup ====');
       // console.log('img_id : '+req.params.img_id);
       var sql = "SELECT down FROM image where id="+req.params.img_id;
-      // console.log(sql);
+      console.log(sql);
       conn.query(sql, function(err, result){ //증가할 이미지 찾기
         if(err){
           console.log(err);
@@ -448,7 +449,7 @@ module.exports = function(app)
   app.get('/imglist', function(req, res){
       console.log('\n\t==== ROUTE /imglist ====');
       var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d') as created_at FROM image";
-      // console.log(sql);
+      console.log(sql);
       conn.query(sql, function(err, image){ //전체 이미지 목록
         if(err){
           console.log(err);
@@ -478,7 +479,7 @@ module.exports = function(app)
   app.get('/img/:id', function(req, res){
       console.log('\n\t==== ROUTE /img/:id ====');
       var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d') as created_at FROM image WHERE id>="+req.params.id;
-      // console.log(sql);
+      console.log(sql);
       conn.query(sql, function(err, image){ //전체 이미지 목록
         if(err){
           console.log(err);
@@ -508,7 +509,7 @@ module.exports = function(app)
   app.get('/imgAt/:date', function(req, res){
       console.log('\n\t==== ROUTE /imgAt ====');
       var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d') as created_at FROM image WHERE created_at>='"+req.params.date+"'";
-      // console.log(sql);
+      console.log(sql);
       conn.query(sql, function(err, image){ //이미지 목록
         if(err){
           console.log(err);
@@ -534,5 +535,41 @@ module.exports = function(app)
           });
         }//end of else
       });
+  });
+  app.post('/imgPeriod', function(req, res){
+    console.log('\n\t==== ROUTE /imgPeriod ====');
+    // console.log(req.body.startdate);
+    // console.log(req.body.enddate);
+    var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d') as created_at "+
+              "FROM image "+
+              "WHERE DATE(created_at) between '"+req.body.startdate+"' and '"+req.body.enddate+"'";
+    // console.log(sql);
+    conn.query(sql, function(err, image){ // 이미지 목록
+      if(err){
+        console.log(err);
+        res.json({
+          "result" : "fail",
+          "err" : err
+        });
+      } else {
+        // console.log(image);
+        conn.query('SELECT count(id) as count FROM image WHERE DATE(created_at) between "'+req.body.startdate+'" and "'+req.body.enddate+'"', function(err, count){ //전체 이미지 갯수
+          if(err){
+            console.log(err);
+            res.json({
+              "result" : "fail",
+              "err" : err
+            });
+          } else {
+            // console.log(count[0].count);
+            res.json({
+              "result" : "success",
+              "count" : count[0].count,
+              "imglist" : image
+            });
+          } //end of else
+        });
+      } //end of else
+    });
   });
 }

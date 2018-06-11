@@ -47,6 +47,9 @@ tr {
     width: 100px;
     height: auto;
 }
+.panel-body button{
+    width: 8rem;
+}
 .panel-body form {
     /*display: inline-block;*/
     float: right;
