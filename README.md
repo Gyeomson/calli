@@ -122,4 +122,12 @@
       "imglist" : [이미지 리스트] - result가 success인 경우
         "id" "name" "click" "down" "created_at"
       "err" : [에러메세지 전송] - result가 fail 
+     /pushlist
+      :전체 푸시 리스트를 전송
+      return format json
+      "result" : "[success|fail]"
+      "count" : [푸시 리스트 갯수] - result가 success인 경우
+      "pushlist" : [푸시 리스트] - result가 success인 경우
+        "id" "content" "created_at"
+      "err" : [에러메세지 전송] - result가 fail 
     

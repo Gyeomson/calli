@@ -574,4 +574,39 @@ module.exports = function(app)
       } //end of else
     });
   });
+  app.get('/pushlist', function(req, res){ //푸시 알림
+      console.log('\n\t==== ROUTE /pushlist ====');
+      // var d = new Date();
+      // var month = d.getMonth()+1;
+      // if(month < 10) month = '0'+month;
+      // var date = d.getFullYear()+"-"+month+"-"+d.getDate();
+      var sql = 'SELECT id, content, DATE_FORMAT(created_at,"%Y.%m.%d") as created_at FROM push';
+      conn.query(sql, function(err, push){ //전체 푸시 목록
+        if(err){
+          console.log(err);
+          res.json({
+            "result" : "fail",
+            "err" : err
+          });
+        } else {
+          // console.log(push);
+          conn.query('SELECT count(id) as count FROM push', function(err, count){ //전체 알림 목록
+          if(err){
+            console.log(err);
+            res.json({
+              "result" : "fail",
+              "err" : err
+            });
+          } else {
+            // console.log(count[0].count);
+            res.json({
+              "result" : "success",
+              "count" : count[0].count,
+              "pushlist" : push
+            });
+          }
+        });
+        }//end of else
+      });
+  });
 }
