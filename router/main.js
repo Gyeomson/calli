@@ -5,9 +5,11 @@ module.exports = function(app)
     host     : 'localhost',
     user     : 'root',
     // password : '111111',
-    database : 'calli'
+    database : 'calli',
+    charset  : 'utf8'
   });
   conn.connect();
+  conn.query('USE calli');
   
   var multer = require('multer');
   const upload = multer({
@@ -111,7 +113,7 @@ module.exports = function(app)
   app.get('/img', function(req, res){
     if(req.session.login == 'logined') {
       console.log('\n\t==== ROUTE /img ====');
-      var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d %H시%i분') as created_at FROM image";
+      var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d %H시%i분') as created_at FROM image ORDER BY created_at DESC";
       // console.log(sql);
       conn.query(sql, function(err, image){ //전체 이미지 목록
         if(err){
