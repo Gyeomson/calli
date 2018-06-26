@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko" ng-app>
+  <head>
+    <title>Calli</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="/css/index.css">
+  </head>
+  <body>
+      
+    <%- include nav.ejs %>
+      
+    <div class="container">
+      <div class="explan">
+        <ul>
+          <li>콘텐츠 등록</li>
+        </ul>
+      </div>
+      <form class="form-inline" action="upload" method="post" enctype="multipart/form-data">
+        <table class="table">
+          <tr>
+            <td>등록 및 예약일</td>
+            <td>
+              <input class="form-control" name="date" type="date" value="<%= date %>">
+              <select name="time" class="form-control">
+                <% for(var i=1; i<=24; i++) {%>
+                  <% if(i==time) {%>
+                    <option value="<%= i %>" selected><%=i%></option>
+                  <% } else {%>
+                    <option value="<%= i %>"><%=i%></option>
+                <% } } %>
+              </select> 시 
+              <select name="min" class="form-control">
+                <% for(var i=1; i<=60; i++) {%>
+                  <% if(i==min) {%>
+                    <option value="<%= i %>" selected><%=i%></option>
+                  <% } else {%>
+                    <option value="<%= i %>"><%=i%></option>
+                <% } } %>
+              </select> 분
+            </td>
+          </tr>
+          <tr>
+            <td>이미지</td>
+            <td>
+              
+                <input class="btn btn-link" name="img" type="file">
+                
+              
+            </td>
+          </tr>
+        </table>
+        <div style="text-align:center">
+          <input class="btn btn-default" type="button" value="목록" onclick="window.location.href='/img'"></input>
+          <input class="btn btn-primary" type="submit" value=" 저장 "></input>
+        </div>
+      </form>
+      
+    </div> <!-- end of container -->
+    
+  </body>
+</html>
