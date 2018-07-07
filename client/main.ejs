@@ -42,13 +42,15 @@
             <td>총 다운수</td>
             <td>총 AD뷰</td>
           </thead>
+          <% for(var i in total){ %>
           <tr>
-              <td>2018.01.31</td>
-              <td>1,000</td>
-              <td>100</td>
-              <td>100</td>
-              <td>100</td>
+              <td><%= total[i].date %></td>
+              <td><%= total[i].visit %></td>
+              <td><%= total[i].user %></td>
+              <td><%= total[i].down %></td>
+              <td><%= total[i].ADview %></td>
           </tr>
+          <% } %>
           
         </table>
       </div>

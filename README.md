@@ -85,13 +85,21 @@
         
 ## Database
     <calli>
+    #total
+        id   |    date   |   visit   |    user   |    down   |  ADview
+     int(11) |    date   |  int(11)  |  int(11)  |  int(11)  |  int(11)
+    NOT NULL |  NOT NULL | DEFAULT 0 | DEFAULT 0 | DEFAULT 0 | DEFAULT 0
+    -PRIMARY KEY(id)
+    
     #user
-    id | created_at | logined_at | device | 계정 | email | gender | age | push_time | visit | down | star | ADview
+       id    |  created_at  |   logined_at |    device    |  account_type | account_id |    email     |    gender    |    age   | push_time |   visit   |     down  |   star    |  ADview
+     int(11) |   datetime   |    datetime  |  varchar(10) |   varchar(10) |   int(11)  |  varchar(30) |   varchar(6) |  int(11) |  datetime |   int(11) |   int(11) |   int(11) |  int(11)
+    NOT NULL |    NOT NULL  |    NOT NULL  |    NOT NULL  |    NOT NULL   |   NOT NULL | DEFAULT NULL | DEFAULT NULL | NOT NULL |  NOT NULL | DEFAULT 0 | DEFAULT 0 | DEFAULT 0 | DEFAULT 0   
     - PRIMARY KEY(id)
     
     #image
-         id        |   profile   |     name     |    write    |   resource   |   click   |    down     | created_at
-          int      | varchar(30) |  varchar(30) | varchar(30) |  varchar(30) |    int    |    int      |  datetime
+         id        |   profile   |     name     |    calli    |   resource   |   click   |    down     | created_at
+          int      | varchar(30) |  varchar(30) | varchar(50) |  varchar(30) |    int    |    int      |  datetime
     AUTO_INCREMENT |    NOT NULL |   NOT NULL   |   NOT NULL  |   NOT NULL   | default 0 |  default 0  |
     - PRIMARY KEY(id)
     - profile:프사 name:모바일배경 글씨:write
@@ -99,12 +107,12 @@
     #bgimage
            id        |    content    | created_at
            int       |  varchar(30)  |  datetime
-      AUTO_INCREMENT |    NOT NULL   |
+      AUTO_INCREMENT |    NOT NULL   | DEFAULT NULL
     - PRIMARY KEY(id)
     
     #banner
            id        |    content    |   click   |      link      | created_at
-           int       |  varchar(30)  |    int    |  varchar(2000) |  datetime
+           int       |  varchar(30)  |    int    |  varchar(200) |  datetime
       AUTO_INCREMENT |    NOT NULL   | default 0 |                |
     - PRIMARY KEY(id)
     
@@ -169,3 +177,35 @@
         "id" "content" "created_at"
       "err" : [에러메세지 전송] - result가 fail 
     
+
+  
+    return format json
+    "result" : "[success|fail]"
+    "return" : [결과메세지 전송] - result가 success인 경우
+    "err" : [에러메세지 전송] - result가 fail 
+    
+    /createUser (post)
+    :유저 생성
+    devide, account_type, account_id, email, gender, age 필요
+    push_time은 없으면 현재 시간으로 설정
+    /findUser/:userId 
+    :유저 검색
+    /deleteUser/:userId
+    :유저 삭제
+    /loginUser/:userId
+    :유저 로그인 시간 기록 (서버 시간으로 기록)
+    /pushtimeUser (post)
+    :유저 알림시간 설정
+    userId, push_time 필요
+    /visitUser/:userId
+    :유저 방문수 증가(+1)
+    /downUser/:userId
+    :유저 다운로드 수 증가(+1)
+    /starUser/:userId
+    :유저 스타 감소 (-3)
+    /adviewUser/:userId
+    :유저 광고 수 증가(+1), 스타 증가(+5)
+    
+    
+    star 뺴는거 유효성 검사
+    createUser로 넘어오는 age 데이터가 AGE_30_39 이렇게 날아옴
