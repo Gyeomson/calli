@@ -69,7 +69,10 @@
           <thead>
             <td>No</td>
             <td>등록일</td>
+            <td>profile</td>
             <td>리스트 이미지</td>
+            <td>calli 문구</td>
+            <td>출처</td>
             <td>조회수</td>
             <td>다운수</td>
             <td>수정</td>
@@ -79,7 +82,10 @@
             <tr>
               <td><%= image[i].id %></td>
               <td><%= image[i].created_at %></td>
+              <td><%= image[i].profile %></td>
               <td><img class="mini_img" src="/show/<%= image[i].name %>" alt="<%= image[i].name %>"></img></td>
+              <td><%= image[i].calli %></td>
+              <td><%= image[i].resource %></td>
               <td><%= image[i].click %></td>
               <td><%= image[i].down %></td>
               <td>

@@ -102,7 +102,7 @@
           int      | varchar(30) |  varchar(30) | varchar(50) |  varchar(30) |    int    |    int      |  datetime
     AUTO_INCREMENT |    NOT NULL |   NOT NULL   |   NOT NULL  |   NOT NULL   | default 0 |  default 0  |
     - PRIMARY KEY(id)
-    - profile:프사 name:모바일배경 글씨:write
+    - profile:프사 name:모바일배경 calli:글씨
     
     #bgimage
            id        |    content    | created_at

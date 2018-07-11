@@ -84,7 +84,6 @@ module.exports = function(app)
       res.redirect('/');
     }
   });
-  
   app.get('/user', function(req, res){
     if(req.session.login == 'logined'){
       console.log('\n\t==== ROUTE /user ====');
@@ -119,11 +118,10 @@ module.exports = function(app)
       res.redirect('/');
     }
   });
-  
   app.get('/img', function(req, res){
     if(req.session.login == 'logined') {
       console.log('\n\t==== ROUTE /img ====');
-      var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d %H시%i분') as created_at FROM image ORDER BY created_at DESC";
+      var sql = "SELECT id, profile, name, calli, resource, click, down, DATE_FORMAT(created_at,'%Y.%m.%d %H:%i') as created_at FROM image ORDER BY created_at DESC";
       // console.log(sql);
       conn.query(sql, function(err, image){ //전체 이미지 목록
         if(err){
@@ -202,9 +200,9 @@ module.exports = function(app)
       // console.log(date);
       // console.log('req.file : ');console.log(req.file);
       if(req.file != undefined) {
-        var sql = "INSERT INTO image (name, created_at) VALUES('"+req.file.filename+"', '"+date+"');";
+        var sql = "INSERT INTO image (name, calli, resource, created_at) VALUES(?, ?, ?, ?);";
         // console.log(sql);
-        conn.query(sql, function(err, result){ //전체 이미지 목록
+        conn.query(sql, [req.file.filename, req.body.calli, req.body.resource, date], function(err, result){ //전체 이미지 목록
           if(err){
             console.log(err);
             res.redirect('/imgUpload');
@@ -463,12 +461,175 @@ module.exports = function(app)
     /****user****/
     
   /**********API**************/
-  app.get('/clickup/:img_id', function(req, res){
-      console.log('\n\t==== ROUTE /clickup ====');
-      // console.log('img_id : '+req.params.img_id);
-      var sql = "SELECT click FROM image where id="+req.params.img_id;
-      console.log(sql);
-      conn.query(sql, function(err, result){ //증가할 이미지 찾기
+    app.get('/clickup/:img_id', function(req, res){
+        console.log('\n\t==== ROUTE /clickup ====');
+        // console.log('img_id : '+req.params.img_id);
+        var sql = "SELECT click FROM image where id="+req.params.img_id;
+        console.log(sql);
+        conn.query(sql, function(err, result){ //증가할 이미지 찾기
+          if(err){
+            console.log(err);
+            res.json({
+              "result" : "fail",
+              "err" : err
+            });
+          } else {
+            // console.log(result);
+            var click = result[0].click + 1; 
+            var sql = "UPDATE image SET click="+click+" WHERE id="+req.params.img_id;
+            // console.log(sql);
+            conn.query(sql, function(err, result){ //전체 이미지 목록
+              if(err){
+                console.log(err);
+                res.json({
+                  "result" : "fail",
+                  "err" : err
+                });
+              } else {
+                // console.log(result);
+                res.json({
+                  "result" : "success",
+                  "click" : click
+                });
+              }
+            });
+          }
+        });
+    });
+    app.get('/downup/:img_id', function(req, res){
+        console.log('\n\t==== ROUTE /downup ====');
+        // console.log('img_id : '+req.params.img_id);
+        var sql = "SELECT down FROM image where id="+req.params.img_id;
+        console.log(sql);
+        conn.query(sql, function(err, result){ //증가할 이미지 찾기
+          if(err){
+            console.log(err);
+            res.json({
+              "result" : "fail",
+              "err" : err
+            });
+          } else {
+            // console.log(result);
+            var down = result[0].down + 1; 
+            var sql = "UPDATE image SET down="+down+" WHERE id="+req.params.img_id;
+            // console.log(sql);
+            conn.query(sql, function(err, result){ //전체 이미지 목록
+              if(err){
+                console.log(err);
+                res.json({
+                  "result" : "fail",
+                  "err" : err
+                });
+              } else {
+                // console.log(result);
+                res.json({
+                  "result" : "success",
+                  "down" : down
+                });
+              }
+            });
+          }
+        });
+    });
+    app.get('/imglist', function(req, res){
+        console.log('\n\t==== ROUTE /imglist ====');
+        var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d') as created_at FROM image";
+        console.log(sql);
+        conn.query(sql, function(err, image){ //전체 이미지 목록
+          if(err){
+            console.log(err);
+            res.json({
+              "result" : "fail",
+              "err" : err
+            });
+          } else {
+            conn.query('SELECT count(id) as count FROM image', function(err, count){ //전체 이미지 목록
+              if(err){
+                console.log(err);
+                res.json({
+                  "result" : "fail",
+                  "err" : err
+                });
+              } else {
+                res.json({
+                  "result" : "success",
+                  "count" : count[0].count,
+                  "imglist" : image
+                });
+              } //end of else
+            });
+          } //end of else
+        });
+    });
+    app.get('/img/:id', function(req, res){
+        console.log('\n\t==== ROUTE /img/:id ====');
+        var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d') as created_at FROM image WHERE id>="+req.params.id;
+        console.log(sql);
+        conn.query(sql, function(err, image){ //전체 이미지 목록
+          if(err){
+            console.log(err);
+            res.json({
+              "result" : "fail",
+              "err" : err
+            });
+          } else {
+            conn.query('SELECT count(id) as count FROM image WHERE id>='+req.params.id, function(err, count){ //전체 이미지 목록
+              if(err){
+                console.log(err);
+                res.json({
+                  "result" : "fail",
+                  "err" : err
+                });
+              } else {
+                res.json({
+                  "result" : "success",
+                  "count" : count[0].count,
+                  "imglist" : image
+                });
+              } //end of else
+            });
+          }//end of else
+        });
+    });
+    app.get('/imgAt/:date', function(req, res){
+        console.log('\n\t==== ROUTE /imgAt ====');
+        var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d') as created_at FROM image WHERE created_at>='"+req.params.date+"'";
+        console.log(sql);
+        conn.query(sql, function(err, image){ //이미지 목록
+          if(err){
+            console.log(err);
+            res.json({
+              "result" : "fail",
+              "err" : err
+            });
+          } else {
+            conn.query('SELECT count(id) as count FROM image WHERE created_at>="'+req.params.date+'"', function(err, count){ //전체 이미지 목록
+              if(err){
+                console.log(err);
+                res.json({
+                  "result" : "fail",
+                  "err" : err
+                });
+              } else {
+                res.json({
+                  "result" : "success",
+                  "count" : count[0].count,
+                  "imglist" : image
+                });
+              } //end of else
+            });
+          }//end of else
+        });
+    });
+    app.post('/imgPeriod', function(req, res){
+      console.log('\n\t==== ROUTE /imgPeriod ====');
+      // console.log(req.body.startdate);
+      // console.log(req.body.enddate);
+      var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d') as created_at "+
+                "FROM image "+
+                "WHERE DATE(created_at) between '"+req.body.startdate+"' and '"+req.body.enddate+"'";
+      // console.log(sql);
+      conn.query(sql, function(err, image){ // 이미지 목록
         if(err){
           console.log(err);
           res.json({
@@ -476,11 +637,8 @@ module.exports = function(app)
             "err" : err
           });
         } else {
-          // console.log(result);
-          var click = result[0].click + 1; 
-          var sql = "UPDATE image SET click="+click+" WHERE id="+req.params.img_id;
-          // console.log(sql);
-          conn.query(sql, function(err, result){ //전체 이미지 목록
+          // console.log(image);
+          conn.query('SELECT count(id) as count FROM image WHERE DATE(created_at) between "'+req.body.startdate+'" and "'+req.body.enddate+'"', function(err, count){ //전체 이미지 갯수
             if(err){
               console.log(err);
               res.json({
@@ -488,71 +646,7 @@ module.exports = function(app)
                 "err" : err
               });
             } else {
-              // console.log(result);
-              res.json({
-                "result" : "success",
-                "click" : click
-              });
-            }
-          });
-        }
-      });
-  });
-  app.get('/downup/:img_id', function(req, res){
-      console.log('\n\t==== ROUTE /downup ====');
-      // console.log('img_id : '+req.params.img_id);
-      var sql = "SELECT down FROM image where id="+req.params.img_id;
-      console.log(sql);
-      conn.query(sql, function(err, result){ //증가할 이미지 찾기
-        if(err){
-          console.log(err);
-          res.json({
-            "result" : "fail",
-            "err" : err
-          });
-        } else {
-          // console.log(result);
-          var down = result[0].down + 1; 
-          var sql = "UPDATE image SET down="+down+" WHERE id="+req.params.img_id;
-          // console.log(sql);
-          conn.query(sql, function(err, result){ //전체 이미지 목록
-            if(err){
-              console.log(err);
-              res.json({
-                "result" : "fail",
-                "err" : err
-              });
-            } else {
-              // console.log(result);
-              res.json({
-                "result" : "success",
-                "down" : down
-              });
-            }
-          });
-        }
-      });
-  });
-  app.get('/imglist', function(req, res){
-      console.log('\n\t==== ROUTE /imglist ====');
-      var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d') as created_at FROM image";
-      console.log(sql);
-      conn.query(sql, function(err, image){ //전체 이미지 목록
-        if(err){
-          console.log(err);
-          res.json({
-            "result" : "fail",
-            "err" : err
-          });
-        } else {
-          conn.query('SELECT count(id) as count FROM image', function(err, count){ //전체 이미지 목록
-            if(err){
-              console.log(err);
-              res.json({
-                "result" : "fail",
-                "err" : err
-              });
-            } else {
+              // console.log(count[0].count);
               res.json({
                 "result" : "success",
                 "count" : count[0].count,
@@ -562,271 +656,12 @@ module.exports = function(app)
           });
         } //end of else
       });
-  });
-  app.get('/img/:id', function(req, res){
-      console.log('\n\t==== ROUTE /img/:id ====');
-      var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d') as created_at FROM image WHERE id>="+req.params.id;
-      console.log(sql);
-      conn.query(sql, function(err, image){ //전체 이미지 목록
-        if(err){
-          console.log(err);
-          res.json({
-            "result" : "fail",
-            "err" : err
-          });
-        } else {
-          conn.query('SELECT count(id) as count FROM image WHERE id>='+req.params.id, function(err, count){ //전체 이미지 목록
-            if(err){
-              console.log(err);
-              res.json({
-                "result" : "fail",
-                "err" : err
-              });
-            } else {
-              res.json({
-                "result" : "success",
-                "count" : count[0].count,
-                "imglist" : image
-              });
-            } //end of else
-          });
-        }//end of else
-      });
-  });
-  app.get('/imgAt/:date', function(req, res){
-      console.log('\n\t==== ROUTE /imgAt ====');
-      var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d') as created_at FROM image WHERE created_at>='"+req.params.date+"'";
-      console.log(sql);
-      conn.query(sql, function(err, image){ //이미지 목록
-        if(err){
-          console.log(err);
-          res.json({
-            "result" : "fail",
-            "err" : err
-          });
-        } else {
-          conn.query('SELECT count(id) as count FROM image WHERE created_at>="'+req.params.date+'"', function(err, count){ //전체 이미지 목록
-            if(err){
-              console.log(err);
-              res.json({
-                "result" : "fail",
-                "err" : err
-              });
-            } else {
-              res.json({
-                "result" : "success",
-                "count" : count[0].count,
-                "imglist" : image
-              });
-            } //end of else
-          });
-        }//end of else
-      });
-  });
-  app.post('/imgPeriod', function(req, res){
-    console.log('\n\t==== ROUTE /imgPeriod ====');
-    // console.log(req.body.startdate);
-    // console.log(req.body.enddate);
-    var sql = "SELECT id, name, click, down, DATE_FORMAT(created_at,'%Y.%m.%d') as created_at "+
-              "FROM image "+
-              "WHERE DATE(created_at) between '"+req.body.startdate+"' and '"+req.body.enddate+"'";
-    // console.log(sql);
-    conn.query(sql, function(err, image){ // 이미지 목록
-      if(err){
-        console.log(err);
-        res.json({
-          "result" : "fail",
-          "err" : err
-        });
-      } else {
-        // console.log(image);
-        conn.query('SELECT count(id) as count FROM image WHERE DATE(created_at) between "'+req.body.startdate+'" and "'+req.body.enddate+'"', function(err, count){ //전체 이미지 갯수
-          if(err){
-            console.log(err);
-            res.json({
-              "result" : "fail",
-              "err" : err
-            });
-          } else {
-            // console.log(count[0].count);
-            res.json({
-              "result" : "success",
-              "count" : count[0].count,
-              "imglist" : image
-            });
-          } //end of else
-        });
-      } //end of else
     });
-  });
-  app.get('/pushlist', function(req, res){ //푸시 알림
-      console.log('\n\t==== ROUTE /pushlist ====');
-
-      var sql = 'SELECT id, content, DATE_FORMAT(created_at,"%Y.%m.%d") as created_at FROM push';
-      conn.query(sql, function(err, push){ //전체 푸시 목록
-        if(err){
-          console.log(err);
-          res.json({
-            "result" : "fail",
-            "err" : err
-          });
-        } else {
-          // console.log(push);
-          conn.query('SELECT count(id) as count FROM push', function(err, count){ //전체 알림 목록
-          if(err){
-            console.log(err);
-            res.json({
-              "result" : "fail",
-              "err" : err
-            });
-          } else {
-            // console.log(count[0].count);
-            res.json({
-              "result" : "success",
-              "count" : count[0].count,
-              "pushlist" : push
-            });
-          }
-        });
-        }//end of else
-      });
-  });
+    app.get('/pushlist', function(req, res){ //푸시 알림
+        console.log('\n\t==== ROUTE /pushlist ====');
   
-  /****user****/
-  app.post('/createUser', function(req, res){
-    console.log('\n\t==== ROUTE /createUser ====');
-    
-    var created_at = getDatetime();
-    var device = req.body.device;
-    var account_type = req.body.account_type;
-    var account_id = req.body.account_id;
-    var email = req.body.email;
-    var gender = req.body.gender;
-    var age = req.body.age;
-    var push_time = (req.body.push_time == undefined)?(getDatetime()):(req.body.push_time);
-    
-    console.log('created_at : '+created_at); console.log('device : '+device);
-    console.log('account_type : '+account_type); console.log('account_id : '+account_id);
-    console.log('email : '+email); console.log('gender : '+gender);
-    console.log('age : '+age); console.log('push_time : '+push_time);
-    
-    var sql = 'INSERT INTO user(created_at, device, account_type, account_id, email, gender, age) VALUES("?","?","?",?,"?","?",?)';
-    conn.query(sql, [created_at, device, account_type, account_id, email, gender, age], function(err, user){ //전체 푸시 목록
-      if(err){
-        console.log(err);
-        res.json({
-          "result" : "fail",
-          "err" : err
-        });
-      } else {
-        todayTotal('user', function(ok, result){
-          if(ok){
-            res.json({
-              "result" : "success",
-              "return" : user
-            });
-          } else errControll(result, res);
-        });
-        
-      }//end of else
-    });
-  });
-  app.get('/findUser/:userId', function(req, res){
-    console.log('\n\t==== ROUTE /findUser ====');
-    var id = req.params.userId;
-    
-    var sql = 'SELECT * FROM user WHERE id = ?';
-    conn.query(sql, id, function(err, user){ //특정 유저 검색
-      if(err){
-        console.log(err);
-        res.json({
-          "result" : "fail",
-          "err" : err
-        });
-      } else {
-        res.json({
-          "result" : "success",
-          "return" : user
-        });
-      }//end of else
-    });
-  });
-  app.get('/deleteUser/:userId', function(req, res){
-    console.log('\n\t==== ROUTE /deleteUser ====');
-    var id = req.params.userId;
-    
-    var sql = 'DELETE FROM user WHERE id = ?';
-    conn.query(sql, id, function(err, user){ //특정 유저 삭제
-      if(err){
-        console.log(err);
-        res.json({
-          "result" : "fail",
-          "err" : err
-        });
-      } else {
-        res.json({
-          "result" : "success",
-          "return" : user
-        });
-      }//end of else
-    });
-  });
-  app.get('/loginUser/:userId', function(req, res){
-    console.log('\n\t==== ROUTE /loginUser ====');
-    var id = req.params.userId;
-    
-    var sql = 'UPDATE user SET logined_at = "'+getDatetime()+'" WHERE id = ?';
-    conn.query(sql, id, function(err, user){ //특정 유저 로그인 기록
-      if(err){
-        console.log(err);
-        res.json({
-          "result" : "fail",
-          "err" : err
-        });
-      } else {
-        res.json({
-          "result" : "success",
-          "return" : user
-        });
-      }//end of else
-    });
-  });
-  app.post('/pushtimeUser', function(req, res){
-    console.log('\n\t==== ROUTE /pushtimeUser ====');
-    var id = req.body.userId;
-    var pushtime = req.body.push_time;
-    
-    var sql = 'UPDATE user SET pushtimeUser = "?" WHERE id = ?';
-    conn.query(sql, [pushtime, id], function(err, user){ //특정 유저 push알림 시간 기록
-      if(err){
-        console.log(err);
-        res.json({
-          "result" : "fail",
-          "err" : err
-        });
-      } else {
-        res.json({
-          "result" : "success",
-          "return" : user
-        });
-      }//end of else
-    });
-  });
-  app.get('/visitUser/:userId', function(req, res){
-    console.log('\n\t==== ROUTE /visitUser ====');
-    var id = req.params.userId;
-    
-    var sql = 'SELECT visit FROM user WHERE id = ?';
-    conn.query(sql, id, function(err, visit){ //특정 유저 로그인 기록
-      if(err){
-        console.log(err);
-        res.json({
-          "result" : "fail",
-          "err" : err
-        });
-      } else {
-        sql = 'UPDATE user SET visit = ? WHERE id = ?'
-        conn.query(sql, [visit[0]['visit']+1, id], function(err, result){
+        var sql = 'SELECT id, content, DATE_FORMAT(created_at,"%Y.%m.%d") as created_at FROM push';
+        conn.query(sql, function(err, push){ //전체 푸시 목록
           if(err){
             console.log(err);
             res.json({
@@ -834,123 +669,286 @@ module.exports = function(app)
               "err" : err
             });
           } else {
-            todayTotal('visit', function(ok, result){
-              if(ok){
-                res.json({
+            // console.log(push);
+            conn.query('SELECT count(id) as count FROM push', function(err, count){ //전체 알림 목록
+            if(err){
+              console.log(err);
+              res.json({
+                "result" : "fail",
+                "err" : err
+              });
+            } else {
+              // console.log(count[0].count);
+              res.json({
+                "result" : "success",
+                "count" : count[0].count,
+                "pushlist" : push
+              });
+            }
+          });
+          }//end of else
+        });
+    });
+    
+    /****user****/ //-createUser, loginUser
+    app.post('/createUser', function(req, res){
+      console.log('\n\t==== ROUTE /createUser ====');
+      
+      var created_at = getDatetime();
+      var device = req.body.device;
+      var account_type = req.body.account_type;
+      var account_id = req.body.account_id;
+      var email = req.body.email;
+      var gender = req.body.gender;
+      var age = req.body.age;
+      var push_time = (req.body.push_time == undefined)?(getDatetime()):(req.body.push_time);
+      
+      console.log('created_at : '+created_at); console.log('device : '+device);
+      console.log('account_type : '+account_type); console.log('account_id : '+account_id);
+      console.log('email : '+email); console.log('gender : '+gender);
+      console.log('age : '+age); console.log('push_time : '+push_time);
+      
+      var sql = 'INSERT INTO user(device, account_type, account_id, email, gender, age) VALUES("?","?",?,"?","?",?)';
+      conn.query(sql, [device, account_type, account_id, email, gender, age], function(err, user){ //전체 푸시 목록
+        if(err){
+          console.log(err);
+          res.json({
+            "result" : "fail",
+            "err" : err
+          });
+        } else {
+          todayTotal('user', function(ok, result){
+            if(ok){
+              res.json({
+                "result" : "success",
+                "return" : user
+              });
+            } else errControll(result, res);
+          });
+          
+        }//end of else
+      });
+    });
+    app.get('/findUser/:userId', function(req, res){
+      console.log('\n\t==== ROUTE /findUser ====');
+      var id = req.params.userId;
+      
+      var sql = 'SELECT * FROM user WHERE id = ?';
+      conn.query(sql, id, function(err, user){ //특정 유저 검색
+        if(err){
+          console.log(err);
+          res.json({
+            "result" : "fail",
+            "err" : err
+          });
+        } else {
+          res.json({
+            "result" : "success",
+            "return" : user
+          });
+        }//end of else
+      });
+    });
+    app.get('/deleteUser/:userId', function(req, res){
+      console.log('\n\t==== ROUTE /deleteUser ====');
+      var id = req.params.userId;
+      
+      var sql = 'DELETE FROM user WHERE id = ?';
+      conn.query(sql, id, function(err, user){ //특정 유저 삭제
+        if(err){
+          console.log(err);
+          res.json({
+            "result" : "fail",
+            "err" : err
+          });
+        } else {
+          res.json({
+            "result" : "success",
+            "return" : user
+          });
+        }//end of else
+      });
+    });
+    app.get('/loginUser/:userId', function(req, res){
+      console.log('\n\t==== ROUTE /loginUser ====');
+      var id = req.params.userId;
+      
+      var sql = 'UPDATE user SET logined_at = "'+getDatetime()+'" WHERE id = ?';
+      conn.query(sql, id, function(err, user){ //특정 유저 로그인 기록
+        if(err){
+          console.log(err);
+          res.json({
+            "result" : "fail",
+            "err" : err
+          });
+        } else {
+          res.json({
+            "result" : "success",
+            "return" : user
+          });
+        }//end of else
+      });
+    });
+    app.post('/pushtimeUser', function(req, res){
+      console.log('\n\t==== ROUTE /pushtimeUser ====');
+      var id = req.body.userId;
+      var pushtime = req.body.push_time;
+      
+      var sql = 'UPDATE user SET pushtimeUser = "?" WHERE id = ?';
+      conn.query(sql, [pushtime, id], function(err, user){ //특정 유저 push알림 시간 기록
+        if(err){
+          console.log(err);
+          res.json({
+            "result" : "fail",
+            "err" : err
+          });
+        } else {
+          res.json({
+            "result" : "success",
+            "return" : user
+          });
+        }//end of else
+      });
+    });
+    app.get('/visitUser/:userId', function(req, res){
+      console.log('\n\t==== ROUTE /visitUser ====');
+      var id = req.params.userId;
+      
+      var sql = 'SELECT visit FROM user WHERE id = ?';
+      conn.query(sql, id, function(err, visit){ //특정 유저 로그인 기록
+        if(err){
+          console.log(err);
+          res.json({
+            "result" : "fail",
+            "err" : err
+          });
+        } else {
+          sql = 'UPDATE user SET visit = ? WHERE id = ?'
+          conn.query(sql, [visit[0]['visit']+1, id], function(err, result){
+            if(err){
+              console.log(err);
+              res.json({
+                "result" : "fail",
+                "err" : err
+              });
+            } else {
+              todayTotal('visit', function(ok, result){
+                if(ok){
+                  res.json({
+                    "result" : "success",
+                    "return" : result
+                  });
+                } else errControll(result, res);
+              });
+            }
+          });
+        }//end of else
+      });
+    });
+    app.get('/downUser/:userId', function(req, res){
+      console.log('\n\t==== ROUTE /downUser ====');
+      var id = req.params.userId;
+      
+      var sql = 'select down FROM user WHERE id = ?';
+      conn.query(sql, id, function(err, down){ //특정 유저 다운로드 수 검색
+        if(err){
+          console.log(err);
+          res.json({
+            "result" : "fail",
+            "err" : err
+          });
+        } else {
+          sql = 'UPDATE user SET down = ? where id = ?'
+          conn.query(sql, [down[0]['down']+1, id], function(err, result){
+            if(err){
+              console.log(err);
+              res.json({
+                "result" : "fail",
+                "err" : err
+              });
+            } else {
+              todayTotal('down', function(ok, result){
+                if(ok){
+                  res.json({
                   "result" : "success",
                   "return" : result
-                });
-              } else errControll(result, res);
-            });
-          }
-        });
-      }//end of else
+                  });
+                } else errControll(result, res);
+              });
+            }
+          });
+        }//end of else
+      });
     });
-  });
-  app.get('/downUser/:userId', function(req, res){
-    console.log('\n\t==== ROUTE /downUser ====');
-    var id = req.params.userId;
-    
-    var sql = 'select down FROM user WHERE id = ?';
-    conn.query(sql, id, function(err, down){ //특정 유저 다운로드 수 검색
-      if(err){
-        console.log(err);
-        res.json({
-          "result" : "fail",
-          "err" : err
-        });
-      } else {
-        sql = 'UPDATE user SET down = ? where id = ?'
-        conn.query(sql, [down[0]['down']+1, id], function(err, result){
-          if(err){
-            console.log(err);
-            res.json({
-              "result" : "fail",
-              "err" : err
-            });
-          } else {
-            todayTotal('down', function(ok, result){
-              if(ok){
-                res.json({
-                "result" : "success",
-                "return" : result
-                });
-              } else errControll(result, res);
-            });
-          }
-        });
-      }//end of else
+    app.get('/starUser/:userId', function(req, res){
+      console.log('\n\t==== ROUTE /starUser ====');
+      var id = req.params.userId;
+      
+      var sql = 'select star FROM user WHERE id = ?';
+      conn.query(sql, id, function(err, star){ //특정 유저 star 검색
+        if(err){
+          console.log(err);
+          res.json({
+            "result" : "fail",
+            "err" : err
+          });
+        } else {
+          sql = 'UPDATE user SET star = ? where id = ?';
+          conn.query(sql, [star[0]['star']-3, id], function(err, result){
+            if(err){
+              console.log(err);
+              res.json({
+                "result" : "fail",
+                "err" : err
+              });
+            } else {
+              res.json({
+              "result" : "success",
+              "return" : result
+              });
+            }
+          });
+        }//end of else
+      });
     });
-  });
-  app.get('/starUser/:userId', function(req, res){
-    console.log('\n\t==== ROUTE /starUser ====');
-    var id = req.params.userId;
-    
-    var sql = 'select star FROM user WHERE id = ?';
-    conn.query(sql, id, function(err, star){ //특정 유저 star 검색
-      if(err){
-        console.log(err);
-        res.json({
-          "result" : "fail",
-          "err" : err
-        });
-      } else {
-        sql = 'UPDATE user SET star = ? where id = ?';
-        conn.query(sql, [star[0]['star']-3, id], function(err, result){
-          if(err){
-            console.log(err);
-            res.json({
-              "result" : "fail",
-              "err" : err
-            });
-          } else {
-            res.json({
-            "result" : "success",
-            "return" : result
-            });
-          }
-        });
-      }//end of else
+    app.get('/adviewUser/:userId', function(req, res){
+      console.log('\n\t==== ROUTE /adviewUser ====');
+      var id = req.params.userId;
+      
+      var sql = 'select star, ADview FROM user WHERE id = ?';
+      conn.query(sql, id, function(err, result){ //특정 유저 star, ADview 검색
+        if(err){
+          console.log(err);
+          res.json({
+            "result" : "fail",
+            "err" : err
+          });
+        } else {
+          var star = result[0]['star'];
+          var adview = result[0]['ADview'];
+          sql = 'UPDATE user SET star = ?, ADview = ? where id = ?';
+          conn.query(sql, [star+5, adview+1, id], function(err, result){
+            if(err){
+              console.log(err);
+              res.json({
+                "result" : "fail",
+                "err" : err
+              });
+            } else {
+              todayTotal('ADview', function(ok, result){
+                if(ok){
+                  res.json({
+                  "result" : "success",
+                  "return" : result
+                  });
+                } else errControll(result, res);
+              });
+              
+            }
+          });
+        }//end of else
+      });
     });
-  });
-  app.get('/adviewUser/:userId', function(req, res){
-    console.log('\n\t==== ROUTE /adviewUser ====');
-    var id = req.params.userId;
-    
-    var sql = 'select star, ADview FROM user WHERE id = ?';
-    conn.query(sql, id, function(err, result){ //특정 유저 star, ADview 검색
-      if(err){
-        console.log(err);
-        res.json({
-          "result" : "fail",
-          "err" : err
-        });
-      } else {
-        var star = result[0]['star'];
-        var adview = result[0]['ADview'];
-        sql = 'UPDATE user SET star = ?, ADview = ? where id = ?';
-        conn.query(sql, [star+5, adview+1, id], function(err, result){
-          if(err){
-            console.log(err);
-            res.json({
-              "result" : "fail",
-              "err" : err
-            });
-          } else {
-            todayTotal('ADview', function(ok, result){
-              if(ok){
-                res.json({
-                "result" : "success",
-                "return" : result
-                });
-              } else errControll(result, res);
-            });
-            
-          }
-        });
-      }//end of else
-    });
-  });
   
   
   function getDatetime(){
